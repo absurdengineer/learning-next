@@ -6,7 +6,8 @@ interface Props {
   params: { slug: string[] };
 }
 
-const ProductPage = ({ params: { slug } }: Props) => {
+const ProductPage = async ({ params }: Props) => {
+  const { slug } = await params;
   return <div>ProductPage: {slug}</div>;
 };
 
