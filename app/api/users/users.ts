@@ -507,9 +507,6 @@ export const users: User[] = [
   },
 ];
 
-let id = 1;
+let id = 100;
 
-export const getNextId = () => {
-  if (id > 100) id = 1;
-  return (id += 1);
-};
+export const getNextUserId = () => (id += 1);

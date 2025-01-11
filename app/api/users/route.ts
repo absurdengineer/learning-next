@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { users, User, getNextId } from "./users";
+import { users, getNextUserId } from "./users";
 import userSchema from "./schema";
 
 /// request is not needed here, but it's a good practice and also
@@ -11,18 +11,17 @@ export const GET = (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const user = await request.json();
+  let user = await request.json();
   const validation = userSchema.safeParse(user);
   if (!validation.success)
     return NextResponse.json(
       { error: validation.error.errors },
       { status: 400 }
     );
+  user = { id: getNextUserId(), ...user };
+  users.push(user);
   return NextResponse.json(
-    {
-      id: getNextId(),
-      ...user,
-    },
+    { data: user },
     {
       status: 201,
     }
