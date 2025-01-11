@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { users, User } from "../users";
+import UserSchema from "../schema";
+import userSchema from "../schema";
 
 interface Props {
   params: {
@@ -38,14 +40,12 @@ export const PUT = async (request: NextRequest, { params }: Props) => {
     );
   }
   const newUser = await request.json();
-  if (!newUser || !newUser.name || !newUser.email) {
+  const validation = userSchema.safeParse(newUser);
+  if (!validation.success)
     return NextResponse.json(
-      {
-        error: "Name and email are required",
-      },
+      { error: validation.error.errors },
       { status: 400 }
     );
-  }
   Object.assign(user, newUser);
   return NextResponse.json(
     {
