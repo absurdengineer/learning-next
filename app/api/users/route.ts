@@ -1,17 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import users from "./users.json";
-
-let id = 1;
-
-const getUserId = () => {
-  if (id > 100) id = 1;
-  return (id += 1);
-};
-
-interface User {
-  name: string;
-  email: string;
-}
+import { users, User, getNextId } from "./users";
 
 /// request is not needed here, but it's a good practice and also
 /// nextjs cache the response if the request object is not included
@@ -33,7 +21,7 @@ export const POST = async (request: NextRequest) => {
       }
     );
   return NextResponse.json({
-    id: getUserId(),
+    id: getNextId(),
     ...user,
   });
 };
