@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-const NavBar = () => {
+const NavBar = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   return (
     <div className="navbar bg-base-100">
       <Link href="/" className="btn btn-ghost text-xl">
