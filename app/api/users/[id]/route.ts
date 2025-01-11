@@ -54,3 +54,18 @@ export const PUT = async (request: NextRequest, { params }: Props) => {
     { status: 200 }
   );
 };
+
+export const DELETE = async (request: NextRequest, { params }: Props) => {
+  const { id } = params;
+  const userIndex = users.findIndex((user: User) => user.id?.toString() === id);
+  if (userIndex === -1) {
+    return NextResponse.json(
+      {
+        error: "User not found",
+      },
+      { status: 404 }
+    );
+  }
+  users.splice(userIndex, 1);
+  return NextResponse.json({}, { status: 200 });
+};
