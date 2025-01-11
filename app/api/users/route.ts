@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { users, getNextUserId } from "./users";
 import userSchema from "./schema";
+import { prisma } from "@/prisma/client";
 
 /// request is not needed here, but it's a good practice and also
 /// nextjs cache the response if the request object is not included
-export const GET = (request: NextRequest) => {
+export const GET = async (request: NextRequest) => {
+  const users = await prisma.user.findMany();
   return NextResponse.json({
     data: users,
   });
