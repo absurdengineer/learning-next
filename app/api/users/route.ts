@@ -20,8 +20,13 @@ export const POST = async (request: NextRequest) => {
         status: 400,
       }
     );
-  return NextResponse.json({
-    id: getNextId(),
-    ...user,
-  });
+  return NextResponse.json(
+    {
+      id: getNextId(),
+      ...user,
+    },
+    {
+      status: 201,
+    }
+  );
 };
