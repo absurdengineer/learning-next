@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { users, getNextUserId } from "./users";
 import userSchema from "./schema";
 import { prisma } from "@/prisma/client";
 
@@ -20,8 +19,7 @@ export const POST = async (request: NextRequest) => {
       { error: validation.error.errors },
       { status: 400 }
     );
-  user = { id: getNextUserId(), ...user };
-  users.push(user);
+  user = await prisma.user.create({ data: user });
   return NextResponse.json(
     { data: user },
     {
