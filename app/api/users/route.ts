@@ -10,7 +10,7 @@ export const GET = (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  const user: User = await request.json();
+  const user = await request.json();
   if (!user || !user.name || !user.email)
     return NextResponse.json(
       {
