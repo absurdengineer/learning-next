@@ -1,5 +1,4 @@
 import { sort } from "fast-sort";
-import React from "react";
 import Link from "next/link";
 
 interface User {

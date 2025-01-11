@@ -1,20 +1,19 @@
-import React from "react";
-
-/// app/products/%5B...slug%5D/page.tsx
-/// for a route defined as /products/groceries/dairy/milk
+// File: app/products/[[...slug]]/page.tsx
+// Example route: /products/groceries/dairy/milk
 interface Props {
-  params: { slug: string[] };
-  searchParams: {
-    sortOrder: string;
-  };
+  params: Promise<{ slug?: string[] }>;
+  searchParams: Promise<{ sortOrder?: string }>;
 }
 
 const ProductPage = async ({ params, searchParams }: Props) => {
   const { slug } = await params;
   const { sortOrder } = await searchParams;
+
   return (
     <div>
-      ProductPage: {slug} {sortOrder}
+      <h1>Product Page</h1>
+      <p>Slug: {slug ? slug.join(" / ") : "No slug provided"}</p>
+      <p>Sort Order: {sortOrder}</p>
     </div>
   );
 };
