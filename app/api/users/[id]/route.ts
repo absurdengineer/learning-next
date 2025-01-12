@@ -33,8 +33,10 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 };
 
 export const PUT = async (request: NextRequest, { params }: Props) => {
-  const { id } = params;
-  const user = users.find((user: User) => user.id?.toString() === id);
+  const { id } = await params;
+  let user = await prisma.user.findUnique({
+    where: { id: parseInt(id) },
+  });
   if (!user) {
     return NextResponse.json(
       {
@@ -43,14 +45,27 @@ export const PUT = async (request: NextRequest, { params }: Props) => {
       { status: 404 }
     );
   }
-  const newUser = await request.json();
-  const validation = userSchema.safeParse(newUser);
+  const body = await request.json();
+  const isEmailExists = await prisma.user.findUnique({
+    where: {
+      email: body.email,
+      NOT: { id: parseInt(id) },
+    },
+  });
+  if (isEmailExists)
+    return NextResponse.json({ error: "Email already taken" }, { status: 400 });
+  const validation = userSchema.safeParse(body);
   if (!validation.success)
     return NextResponse.json(
       { error: validation.error.errors },
       { status: 400 }
     );
-  Object.assign(user, newUser);
+  user = await prisma.user.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: body,
+  });
   return NextResponse.json(
     {
       data: user,
