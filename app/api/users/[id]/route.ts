@@ -9,13 +9,21 @@ interface Props {
   };
 }
 
-export const GET = async (request: NextRequest, { params }: Props) => {
-  const { id } = params;
-  const user = await prisma.user.findUnique({
+interface GetUser {
+  (id: string): Promise<User | null>;
+}
+
+const getUser: GetUser = async (id) => {
+  return await prisma.user.findUnique({
     where: {
       id: parseInt(id),
     },
   });
+};
+
+export const GET = async (request: NextRequest, { params }: Props) => {
+  const { id } = params;
+  const user = await getUser(id);
   if (!user) {
     return NextResponse.json(
       {
@@ -34,9 +42,7 @@ export const GET = async (request: NextRequest, { params }: Props) => {
 
 export const PUT = async (request: NextRequest, { params }: Props) => {
   const { id } = await params;
-  let user = await prisma.user.findUnique({
-    where: { id: parseInt(id) },
-  });
+  let user = await getUser(id);
   if (!user) {
     return NextResponse.json(
       {
@@ -75,9 +81,9 @@ export const PUT = async (request: NextRequest, { params }: Props) => {
 };
 
 export const DELETE = async (request: NextRequest, { params }: Props) => {
-  const { id } = params;
-  const userIndex = users.findIndex((user: User) => user.id?.toString() === id);
-  if (userIndex === -1) {
+  const { id } = await params;
+  const user = await getUser(id);
+  if (!user) {
     return NextResponse.json(
       {
         error: "User not found",
@@ -85,6 +91,10 @@ export const DELETE = async (request: NextRequest, { params }: Props) => {
       { status: 404 }
     );
   }
-  users.splice(userIndex, 1);
+  await prisma.user.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
   return NextResponse.json({}, { status: 200 });
 };
