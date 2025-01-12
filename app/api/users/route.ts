@@ -12,14 +12,21 @@ export const GET = async (request: NextRequest) => {
 };
 
 export const POST = async (request: NextRequest) => {
-  let user = await request.json();
-  const validation = userSchema.safeParse(user);
+  const body = await request.json();
+  const validation = userSchema.safeParse(body);
   if (!validation.success)
     return NextResponse.json(
       { error: validation.error.errors },
       { status: 400 }
     );
-  user = await prisma.user.create({ data: user });
+  let user = await prisma.user.findUnique({
+    where: {
+      email: body.email,
+    },
+  });
+  if (user)
+    return NextResponse.json({ error: "User already exists" }, { status: 400 });
+  user = await prisma.user.create({ data: body });
   return NextResponse.json(
     { data: user },
     {
